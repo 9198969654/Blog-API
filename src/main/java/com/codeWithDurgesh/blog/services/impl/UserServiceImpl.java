@@ -1,6 +1,7 @@
 package com.codeWithDurgesh.blog.services.impl;
 
 import com.codeWithDurgesh.blog.entities.User;
+import com.codeWithDurgesh.blog.exceptions.ResourceNotFoundException;
 import com.codeWithDurgesh.blog.payloads.UserDto;
 import com.codeWithDurgesh.blog.repositories.UserRepo;
 import com.codeWithDurgesh.blog.services.UserService;
@@ -8,40 +9,53 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserServiceImpl implements UserService {
-
     @Autowired
     private UserRepo userRepo;
-
-
 
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = this.dtoToUser(userDto);
         User savedUser = this.userRepo.save(user);
-
         return this.userToDto(savedUser);
     }
 
     @Override
-    public UserDto updateUser(UserDto user, Integer userId) {
-        return null;
+    public UserDto updateUser(UserDto userDto, Integer userId) {
+
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User", " Id", userId));
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(userDto.getPassword());
+        user.setAbout(userDto.getAbout());
+
+       User updateUser =  this.userRepo.save(user);
+       UserDto userDto1 =   this.userToDto(updateUser);
+        return userDto1;
     }
 
     @Override
     public UserDto getUserById(Integer userId) {
-        return null;
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User", " Id", userId));
+        return this.userToDto(user);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        return null;
+       List<User> users =  this.userRepo.findAll();
+       List<UserDto> userDtos = users.stream().map(user -> this.userToDto(user)).collect(Collectors.toList());
+        return userDtos;
     }
 
     @Override
     public void deleteUser(Integer userId) {
-
+      User user =   this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", " Id", userId));
+        this.userRepo.delete(user);
     }
 
     public User dtoToUser(UserDto userDto){
