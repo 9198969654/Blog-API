@@ -12,16 +12,16 @@ public interface PostService {
     PostDto createPost(PostDto postDto, Integer userId, Integer categoryId);
 
     //update
-    Post updatePost(PostDto postDto, Integer postId);
+    PostDto updatePost(PostDto postDto, Integer postId);
 
     //delete
     void deletePost(Integer postId);
 
     //get All Post
-    List<Post> getAllPost();
+    List<PostDto> getAllPost();
 
     //get Single Post
-    Post getPostById(Integer postId);
+    PostDto getPostById(Integer postId);
 
     //get All post by Category
     List<PostDto> getPostsByCategory(Integer categoryId);
