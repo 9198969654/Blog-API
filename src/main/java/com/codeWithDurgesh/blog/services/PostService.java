@@ -2,6 +2,7 @@ package com.codeWithDurgesh.blog.services;
 
 import com.codeWithDurgesh.blog.entities.Post;
 import com.codeWithDurgesh.blog.payloads.PostDto;
+import com.codeWithDurgesh.blog.payloads.PostResponse;
 import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface PostService {
     void deletePost(Integer postId);
 
     //get All Post
-    List<PostDto> getAllPost();
+   PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
 
     //get Single Post
     PostDto getPostById(Integer postId);
@@ -30,6 +31,6 @@ public interface PostService {
     List<PostDto> getPostsByUser(Integer userId);
 
     //search post
-    List<Post> searchPosts(String keyword);
+    List<PostDto> searchPosts(String keyword);
 
 }

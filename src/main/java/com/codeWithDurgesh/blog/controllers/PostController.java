@@ -2,6 +2,7 @@ package com.codeWithDurgesh.blog.controllers;
 
 import com.codeWithDurgesh.blog.payloads.ApiResponse;
 import com.codeWithDurgesh.blog.payloads.PostDto;
+import com.codeWithDurgesh.blog.payloads.PostResponse;
 import com.codeWithDurgesh.blog.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,9 +44,12 @@ public class PostController {
 
     //get All Post
     @GetMapping("/posts")
-    public ResponseEntity<List<PostDto>> getAllPost(){
-       List<PostDto> allPost =  this.postService.getAllPost();
-        return new ResponseEntity<List<PostDto>>(allPost, HttpStatus.OK);
+    public ResponseEntity<PostResponse> getAllPost(@RequestParam(value = "pageNumber", defaultValue = "0",required = false) Integer pageNumber,
+                                                   @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize,
+                                                   @RequestParam(value = "sortBy", defaultValue = "postId", required = false) String sortBy,
+                                                   @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir){
+      PostResponse postResponse =  this.postService.getAllPost(pageNumber, pageSize, sortBy, sortDir);
+        return new ResponseEntity<PostResponse>(postResponse, HttpStatus.OK);
     }
 
     //get Post Details By Id
@@ -67,6 +71,14 @@ public class PostController {
       PostDto updatePost =  this.postService.updatePost(postDto,postId);
       return new ResponseEntity<PostDto>(updatePost, HttpStatus.OK);
     }
+
+    //search
+    @GetMapping("/posts/search/{keywords}")
+    public ResponseEntity<List<PostDto>> searchPostByTitle(@PathVariable("keywords") String keywords){
+        List<PostDto> result = this.postService.searchPosts(keywords);
+        return new ResponseEntity<List<PostDto>>(result, HttpStatus.OK);
+    }
+
 
 }
 
